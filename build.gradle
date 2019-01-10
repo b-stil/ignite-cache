@@ -1,0 +1,59 @@
+if(!hasProperty('mainClass')) {
+    ext.mainClass = 'com.github.elbean.ignite.cache.api.CacheServiceApplication'
+}
+
+buildscript {
+    ext {
+        springBootVersion = '1.5.6.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+group = 'Ignite.Cache'
+version = '1.0.0-SNAPSHOT'
+description = 'Cache as a Service'
+sourceCompatibility = 1.8
+def igniteVersion = '2.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-jersey')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile( "org.apache.ignite:ignite-core:${igniteVersion}")
+    compile("org.apache.ignite:ignite-spring:${igniteVersion}")
+    compile("org.apache.ignite:ignite-indexing:${igniteVersion}")
+    compile("org.apache.ignite:ignite-slf4j:${igniteVersion}")
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-joda")
+    compile group: 'joda-time', name: 'joda-time', version: '2.3'
+    compile group: 'io.swagger', name: 'swagger-jersey2-jaxrs', version: '1.5.16'
+    compile group: 'commons-beanutils', name: 'commons-beanutils', version: '1.9.2'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    testCompile('org.springframework.restdocs:spring-restdocs-mockmvc')
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
+}
+
+processResources {
+    filesMatching("**/application.properties"){
+        expand(project.properties)
+    }
+}
+
+//springBoot { 
+//    requiresUnpack = ['org.glassfish.jersey.core:jersey-server', 'org.glassfish.jersey.core:jersey-core']
+//}
+
+

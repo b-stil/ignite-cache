@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <timestamp key="LogStart" datePattern="yyyy-MM-dd" />
+    <springProperty name="LogDirectory" source="logging.directory" />
+    <springProperty name="ApplicationName" source="spring.application.name" />
+    <property name="ApplicationLog" value="${LogDirectory}/${ApplicationName}" />
+    <property name="SpringLog" value="${logging.directory}\${spring.application.name}\spring\%d{yyyy-MM-dd}.log" />
+    <property name="IgniteLog" value="${logging.directory}\${spring.application.name}\ignite\%d{yyyy-MM-dd}.log" />
+    <property name="ConsolePattern" value="%d %-5level %class{36}.%M = %msg%n" />
+    <property name="FilePattern" value="%d %-5level [%thread] %class{36}.%M line: %L = %msg%n" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %class{36}.%M - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="APP-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ApplicationLog}/${LogStart}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- At minimum daily log rollover -->
+            <fileNamePattern>${ApplicationLog}/archive/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%thread] %class{36}.%M line: %L = %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SPRING-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ApplicationLog}/spring/${LogStart}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- At minimum daily log rollover -->
+            <fileNamePattern>${ApplicationLog}/archive/spring/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%thread] %class{36}.%M line: %L = %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="IGNITE-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${ApplicationLog}/ignite/${LogStart}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- At minimum daily log rollover -->
+            <fileNamePattern>${ApplicationLog}/archive/ignite/%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level [%thread] %class{36}.%M line: %L = %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="local">
+        <logger name="com.github.elbean.ignite.cache" level="trace" additivity="false">
+            <appender-ref ref="APP-FILE" />
+            <appender-ref ref="CONSOLE" />
+        </logger>
+        <logger name="org.springframework" level="INFO" additivity="false">
+            <appender-ref ref="SPRING-FILE" />
+            <appender-ref ref="CONSOLE" />
+        </logger>
+        <logger name="org.apache.ignite" level="INFO" additivity="false">
+            <appender-ref ref="IGNITE-FILE" />
+            <appender-ref ref="CONSOLE" />
+        </logger>
+        <root level="ERROR">
+            <appender-ref ref="APP-FILE" />
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+</configuration>
